@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Escolher Assento - Cinema VIP</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      min-height: 100vh;
+      padding: 20px;
+      color: white;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 20px;
+      padding: 30px;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .header h1 {
+      font-size: 2.5em;
+      margin-bottom: 10px;
+      background: linear-gradient(135deg, #e94560 0%, #f97316 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .header p {
+      color: #aaa;
+      font-size: 0.95em;
+    }
+
+    .tela {
+      background: linear-gradient(135deg, #ccc 0%, #999 100%);
+      color: #333;
+      padding: 20px;
+      margin: 30px auto;
+      width: 300px;
+      border-radius: 15px;
+      font-weight: bold;
+      font-size: 1.3em;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .legenda {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin: 25px 0;
+      flex-wrap: wrap;
+    }
+
+    .legenda-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .legenda-box {
+      width: 30px;
+      height: 30px;
+      border-radius: 6px;
+    }
+
+    .legenda-livre {
+      background: #6b7280;
+    }
+
+    .legenda-selecionado {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    }
+
+    .legenda-ocupado {
+      background: #ef4444;
+    }
+
+    .area {
+      margin: 30px auto;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 15px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      max-width: 500px;
+    }
+
+    .area h3 {
+      font-size: 1.2em;
+      margin-bottom: 15px;
+      color: #f97316;
+    }
+
+    .assentos-row {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .assento {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 60px;
+      height: 60px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 0.85em;
+      transition: transform 0.2s, box-shadow 0.2s;
+      border: 2px solid transparent;
+    }
+
+    .assento:hover:not(.ocupado) {
+      transform: scale(1.1);
+    }
+
+    .livre {
+      background: #6b7280;
+      color: white;
+    }
+
+    .livre:hover {
+      box-shadow: 0 0 15px rgba(107, 114, 128, 0.5);
+    }
+
+    .selecionado {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: white;
+      box-shadow: 0 0 20px rgba(16, 185, 129, 0.5);
+      border: 2px solid #34d399;
+    }
+
+    .ocupado {
+      background: #ef4444;
+      color: white;
+      cursor: not-allowed;
+      opacity: 0.7;
+    }
+
+    .ocupado:hover {
+      transform: none;
+    }
+
+    .selecao {
+      background: rgba(59, 130, 246, 0.1);
+      border-radius: 12px;
+      padding: 20px;
+      margin: 30px auto;
+      max-width: 500px;
+      border: 2px solid #3b82f6;
+      display: none;
+    }
+
+    .selecao.ativa {
+      display: block;
+    }
+
+    .selecao h2 {
+      font-size: 1.1em;
+      margin-bottom: 10px;
+      color: #60a5fa;
+    }
+
+    .selecao p {
+      font-size: 1.3em;
+      font-weight: bold;
+      color: #10b981;
+      margin-bottom: 10px;
+    }
+
+    .tipo-assento {
+      font-size: 0.9em;
+      color: #aaa;
+    }
+
+    .botoes {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      margin-top: 30px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 15px 30px;
+      border: none;
+      border-radius: 10px;
+      font-size: 1em;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .btn-limpar {
+      background: #6b7280;
+      color: white;
+    }
+
+    .btn-limpar:hover {
+      background: #4b5563;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(107, 114, 128, 0.3);
+    }
+
+    .btn-enviar {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: white;
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .btn-enviar:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
+    }
+
+    .btn-enviar:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .modal.ativa {
+      display: flex;
+    }
+
+    .modal-content {
+      background: #1a1a2e;
+      padding: 30px;
+      border-radius: 15px;
+      text-align: center;
+      max-width: 400px;
+      border: 2px solid #e94560;
+    }
+
+    .modal-content h2 {
+      color: #e94560;
+      margin-bottom: 15px;
+    }
+
+    .modal-content p {
+      color: #aaa;
+      margin-bottom: 20px;
+    }
+
+    .modal-botoes {
+      display: flex;
+      gap: 10px;
+    }
+
+    .modal-botoes button {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background 0.2s;
+    }
+
+    .modal-cancelar {
+      background: #6b7280;
+      color: white;
+    }
+
+    .modal-cancelar:hover {
+      background: #4b5563;
+    }
+
+    .modal-confirmar {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: white;
+    }
+
+    .modal-confirmar:hover {
+      background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    }
+
+    .info {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 0.9em;
+      color: #999;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 20px;
+      }
+
+      .header h1 {
+        font-size: 2em;
+      }
+
+      .assento {
+        width: 50px;
+        height: 50px;
+        font-size: 0.75em;
+      }
+
+      .btn-enviar {
+        min-width: 150px;
+      }
+
+      .tela {
+        width: 250px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <h1>🎬 Escolha seu Assento</h1>
+    <p>Selecione o lugar mais confortável para você</p>
+  </div>
+
+  <div class="tela">📺 TELA</div>
+
+  <!-- LEGENDA -->
+  <div class="legenda">
+    <div class="legenda-item">
+      <div class="legenda-box legenda-livre"></div>
+      <span>Disponível</span>
+    </div>
+    <div class="legenda-item">
+      <div class="legenda-box legenda-selecionado"></div>
+      <span>Selecionado</span>
+    </div>
+    <div class="legenda-item">
+      <div class="legenda-box legenda-ocupado"></div>
+      <span>Ocupado</span>
+    </div>
+  </div>
+
+  <!-- COXÃO (frente) -->
+  <div class="area">
+    <h3>🛋️ Coxão (2 lugares)</h3>
+    <div class="assentos-row">
+      <div id="C1" class="assento livre" onclick="selecionar('C1')">C1</div>
+      <div id="C2" class="assento livre" onclick="selecionar('C2')">C2</div>
+    </div>
+  </div>
+
+  <!-- SOFÁ -->
+  <div class="area">
+    <h3>🛋️ Sofá (3 lugares)</h3>
+    <div class="assentos-row">
+      <div id="S1" class="assento livre" onclick="selecionar('S1')">S1</div>
+      <div id="S2" class="assento livre" onclick="selecionar('S2')">S2</div>
+      <div id="S3" class="assento livre" onclick="selecionar('S3')">S3</div>
+    </div>
+  </div>
+
+  <!-- CADEIRA -->
+  <div class="area">
+    <h3>🪑 Cadeira (1 lugar)</h3>
+    <div class="assentos-row">
+      <div id="A1" class="assento livre" onclick="selecionar('A1')">A1</div>
+    </div>
+  </div>
+
+  <!-- SELEÇÃO -->
+  <div class="selecao" id="selecao">
+    <h2>✅ Assento Selecionado</h2>
+    <p id="assentoSelecionado">-</p>
+    <div class="tipo-assento" id="tipoAssento">-</div>
+  </div>
+
+  <!-- BOTÕES -->
+  <div class="botoes">
+    <button class="btn btn-limpar" onclick="limpar()">🗑️ Limpar</button>
+    <button class="btn btn-enviar" id="btnEnviar" onclick="abrirConfirmacao()" disabled>
+      📲 Enviar Assento
+    </button>
+  </div>
+
+  <div class="info">
+    Última atualização: <span id="timestamp"></span>
+  </div>
+</div>
+
+<!-- MODAL DE CONFIRMAÇÃO -->
+<div class="modal" id="confirmModal">
+  <div class="modal-content">
+    <h2>✅ Confirmar Assento</h2>
+    <p id="confirmTexto">Tem certeza que deseja reservar este assento?</p>
+    <div class="modal-botoes">
+      <button class="modal-cancelar" onclick="fecharConfirmacao()">Cancelar</button>
+      <button class="modal-confirmar" onclick="enviar()">Confirmar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  let escolhido = null;
+  const numero = "5583981735110";
+
+  // Assentos já ocupados
+  const ocupados = ["S2", "C1"];
+
+  const tiposAssento = {
+    "C1": "Coxão Premium",
+    "C2": "Coxão Premium",
+    "S1": "Sofá Conforto",
+    "S2": "Sofá Conforto",
+    "S3": "Sofá Conforto",
+    "A1": "Cadeira Individual"
+  };
+
+  // Marcar ocupados
+  ocupados.forEach(id => {
+    const assento = document.getElementById(id);
+    assento.classList.add("ocupado");
+    assento.classList.remove("livre");
+    assento.onclick = null;
+  });
+
+  function selecionar(id) {
+    const lugar = document.getElementById(id);
+
+    if (lugar.classList.contains("ocupado")) {
+      alert("❌ Esse assento já está ocupado!");
+      return;
+    }
+
+    // Limpar seleção anterior
+    if (escolhido) {
+      const anterior = document.getElementById(escolhido);
+      anterior.classList.remove("selecionado");
+      anterior.classList.add("livre");
+    }
+
+    escolhido = id;
+    lugar.classList.remove("livre");
+    lugar.classList.add("selecionado");
+
+    // Mostrar seleção
+    atualizarSelecao();
+  }
+
+  function atualizarSelecao() {
+    const selecaoDiv = document.getElementById("selecao");
+    const assentoTexto = document.getElementById("assentoSelecionado");
+    const tipoTexto = document.getElementById("tipoAssento");
+    const btnEnviar = document.getElementById("btnEnviar");
+
+    if (escolhido) {
+      selecaoDiv.classList.add("ativa");
+      assentoTexto.textContent = escolhido;
+      tipoTexto.textContent = tiposAssento[escolhido];
+      btnEnviar.disabled = false;
+    } else {
+      selecaoDiv.classList.remove("ativa");
+      assentoTexto.textContent = "-";
+      tipoTexto.textContent = "-";
+      btnEnviar.disabled = true;
+    }
+  }
+
+  function limpar() {
+    if (!escolhido) {
+      alert("Nenhum assento selecionado!");
+      return;
+    }
+
+    if (confirm("Tem certeza que deseja limpar a seleção?")) {
+      const anterior = document.getElementById(escolhido);
+      anterior.classList.remove("selecionado");
+      anterior.classList.add("livre");
+      escolhido = null;
+      atualizarSelecao();
+    }
+  }
+
+  function abrirConfirmacao() {
+    const confirmTexto = document.getElementById("confirmTexto");
+    confirmTexto.textContent = `Deseja confirmar a reserva do assento ${escolhido} (${tiposAssento[escolhido]})?`;
+    document.getElementById("confirmModal").classList.add("ativa");
+  }
+
+  function fecharConfirmacao() {
+    document.getElementById("confirmModal").classList.remove("ativa");
+  }
+
+  function enviar() {
+    if (!escolhido) {
+      alert("Escolha um assento!");
+      return;
+    }
+
+    fecharConfirmacao();
+
+    let mensagem = "*🎬 RESERVA DE ASSENTO - CINEMA VIP 🎬*\n";
+    mensagem += "==============================\n\n";
+    mensagem += `*Assento:* ${escolhido}\n`;
+    mensagem += `*Tipo:* ${tiposAssento[escolhido]}\n`;
+    mensagem += `*Data/Hora:* ${obterDataHora()}\n`;
+    mensagem += "\n==============================\n";
+    mensagem += "🍿 Obrigado por escolher o Cinema VIP!";
+
+    const url = `https://wa.me/${numero}?text=${encodeURIComponent(mensagem)}`;
+    window.open(url, "_blank");
+
+    // Resetar
+    setTimeout(() => {
+      const anterior = document.getElementById(escolhido);
+      anterior.classList.remove("selecionado");
+      anterior.classList.add("livre");
+      escolhido = null;
+      atualizarSelecao();
+    }, 1000);
+  }
+
+  function obterDataHora() {
+    const agora = new Date();
+    const dia = String(agora.getDate()).padStart(2, '0');
+    const mes = String(agora.getMonth() + 1).padStart(2, '0');
+    const ano = agora.getFullYear();
+    const horas = String(agora.getHours()).padStart(2, '0');
+    const minutos = String(agora.getMinutes()).padStart(2, '0');
+
+    return `${dia}/${mes}/${ano} às ${horas}:${minutos}`;
+  }
+
+  function atualizarTimestamp() {
+    document.getElementById("timestamp").textContent = obterDataHora();
+  }
+
+  // Inicializar
+  atualizarSelecao();
+  atualizarTimestamp();
+
+  // Fechar modal ao clicar fora
+  document.getElementById("confirmModal").addEventListener("click", function(event) {
+    if (event.target === this) {
+      fecharConfirmacao();
+    }
+  });
+</script>
+
+</body>
+</html>
