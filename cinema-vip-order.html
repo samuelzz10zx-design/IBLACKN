@@ -98,11 +98,6 @@
       transform: translateY(0);
     }
 
-    .item-price {
-      font-size: 0.75em;
-      opacity: 0.9;
-    }
-
     .cart-section {
       background: #f8f9fa;
       border-radius: 12px;
@@ -157,11 +152,6 @@
       font-weight: 600;
       color: #333;
       margin-bottom: 4px;
-    }
-
-    .cart-item-price {
-      font-size: 0.9em;
-      color: #666;
     }
 
     .cart-item-actions {
@@ -419,17 +409,14 @@
   <div class="section">
     <div class="section-title">🍿 Pipoca</div>
     <div class="button-group">
-      <button class="item-btn" onclick="addItem('Pipoca Pequena', 15.00)">
+      <button class="item-btn" onclick="addItem('Pipoca Pequena')">
         Pipoca Pequena
-        <span class="item-price">R$ 15,00</span>
       </button>
-      <button class="item-btn" onclick="addItem('Pipoca Média', 22.00)">
+      <button class="item-btn" onclick="addItem('Pipoca Média')">
         Pipoca Média
-        <span class="item-price">R$ 22,00</span>
       </button>
-      <button class="item-btn" onclick="addItem('Pipoca Grande', 30.00)">
+      <button class="item-btn" onclick="addItem('Pipoca Grande')">
         Pipoca Grande
-        <span class="item-price">R$ 30,00</span>
       </button>
     </div>
   </div>
@@ -438,13 +425,11 @@
   <div class="section">
     <div class="section-title">🥤 Refrigerante</div>
     <div class="button-group">
-      <button class="item-btn" onclick="addItem('Refri Médio', 8.00)">
+      <button class="item-btn" onclick="addItem('Refri Médio')">
         Refri Médio
-        <span class="item-price">R$ 8,00</span>
       </button>
-      <button class="item-btn" onclick="addItem('Refri Grande', 12.00)">
+      <button class="item-btn" onclick="addItem('Refri Grande')">
         Refri Grande
-        <span class="item-price">R$ 12,00</span>
       </button>
     </div>
   </div>
@@ -453,21 +438,17 @@
   <div class="section">
     <div class="section-title">🍬 Doces & Combos</div>
     <div class="button-group">
-      <button class="item-btn" onclick="addItem('Combo Pequeno', 35.00)">
+      <button class="item-btn" onclick="addItem('Combo Pequeno')">
         Combo Pequeno
-        <span class="item-price">R$ 35,00</span>
       </button>
-      <button class="item-btn" onclick="addItem('Combo Médio', 55.00)">
+      <button class="item-btn" onclick="addItem('Combo Médio')">
         Combo Médio
-        <span class="item-price">R$ 55,00</span>
       </button>
-      <button class="item-btn" onclick="addItem('Chocolate Quente', 10.00)">
+      <button class="item-btn" onclick="addItem('Chocolate Quente')">
         Chocolate Quente
-        <span class="item-price">R$ 10,00</span>
       </button>
-      <button class="item-btn" onclick="addItem('Pipoca Doce', 18.00)">
+      <button class="item-btn" onclick="addItem('Pipoca Doce')">
         Pipoca Doce
-        <span class="item-price">R$ 18,00</span>
       </button>
     </div>
   </div>
@@ -481,18 +462,6 @@
     <ul id="carrinho" class="empty-cart">
       Nenhum item adicionado
     </ul>
-  </div>
-
-  <!-- TOTAIS -->
-  <div class="totals">
-    <div class="total-row">
-      <span>Subtotal:</span>
-      <span id="subtotal">R$ 0,00</span>
-    </div>
-    <div class="total-row">
-      <span>Total:</span>
-      <span id="total-price">R$ 0,00</span>
-    </div>
   </div>
 
   <!-- AÇÕES -->
@@ -522,19 +491,7 @@
   let carrinho = [];
   const numero = "5583981735110";
 
-  const items = {
-    'Pipoca Pequena': 15.00,
-    'Pipoca Média': 22.00,
-    'Pipoca Grande': 30.00,
-    'Refri Médio': 8.00,
-    'Refri Grande': 12.00,
-    'Combo Pequeno': 35.00,
-    'Combo Médio': 55.00,
-    'Chocolate Quente': 10.00,
-    'Pipoca Doce': 18.00,
-  };
-
-  function addItem(itemName, preco) {
+  function addItem(itemName) {
     const existente = carrinho.find(item => item.name === itemName);
     
     if (existente) {
@@ -542,7 +499,6 @@
     } else {
       carrinho.push({
         name: itemName,
-        price: preco,
         quantity: 1
       });
     }
@@ -568,8 +524,6 @@
   function atualizarCarrinho() {
     const lista = document.getElementById("carrinho");
     const totalItems = document.getElementById("total-items");
-    const subtotalEl = document.getElementById("subtotal");
-    const totalEl = document.getElementById("total-price");
     const sendBtn = document.getElementById("send-btn");
 
     lista.innerHTML = "";
@@ -577,24 +531,16 @@
     if (carrinho.length === 0) {
       lista.innerHTML = '<li class="empty-cart">Nenhum item adicionado</li>';
       totalItems.textContent = "0";
-      subtotalEl.textContent = "R$ 0,00";
-      totalEl.textContent = "R$ 0,00";
       sendBtn.disabled = true;
       return;
     }
 
-    let total = 0;
-
     carrinho.forEach((item, index) => {
-      const itemTotal = item.price * item.quantity;
-      total += itemTotal;
-
       const li = document.createElement("li");
       li.className = "cart-item";
       li.innerHTML = `
         <div class="cart-item-info">
           <div class="cart-item-name">${item.name}</div>
-          <div class="cart-item-price">R$ ${item.price.toFixed(2)}</div>
         </div>
         <div class="cart-item-actions">
           <div class="quantity-control">
@@ -609,8 +555,6 @@
     });
 
     totalItems.textContent = carrinho.length;
-    subtotalEl.textContent = `R$ ${total.toFixed(2)}`;
-    totalEl.textContent = `R$ ${total.toFixed(2)}`;
     sendBtn.disabled = false;
   }
 
@@ -645,18 +589,13 @@
     let mensagem = "*🍿 PEDIDO CINEMA VIP 🍿*%0A";
     mensagem += "==============================%0A%0A";
 
-    let total = 0;
-
     carrinho.forEach(item => {
-      const itemTotal = item.price * item.quantity;
-      total += itemTotal;
       mensagem += `• ${item.name}%0A`;
-      mensagem += `   Qtd: ${item.quantity} x R$ ${item.price.toFixed(2)}%0A`;
-      mensagem += `   Subtotal: R$ ${itemTotal.toFixed(2)}%0A%0A`;
+      mensagem += `   Qtd: ${item.quantity}%0A%0A`;
     });
 
     mensagem += "==============================%0A";
-    mensagem += `*TOTAL: R$ ${total.toFixed(2)}*%0A`;
+    mensagem += `*Total de itens: ${carrinho.length}*%0A`;
     mensagem += `*Data/Hora: ${obterDataHora()}*%0A`;
     mensagem += "%0A📍 Obrigado por escolher o Cinema VIP!";
 
