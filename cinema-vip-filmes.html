@@ -374,24 +374,24 @@
       genero: "Terror",
       classificacao: "16 anos",
       duracao: "110 min",
-      sinopse: "Um antigo artefato egípcio desperta uma maldição ancestral. O terror é despertado.",
-      poster: "https://via.placeholder.com/120x180/8B4513/FFFFFF?text=Maldição+da+Múmia"
+      sinopse: "Um antigo artefato egípcio desperta uma maldição ancestral. Algumas coisas devem permanecer enterradas.",
+      poster: "https://images.unsplash.com/photo-1597359947826-b60fc6f0ee00?w=300&h=450&fit=crop"
     },
     {
       titulo: "O Telefone Preto 2",
       genero: "Terror/Suspense",
       classificacao: "14 anos",
       duracao: "105 min",
-      sinopse: "O terror continua através da linha. Uma nova ligação, um novo pesadelo.",
-      poster: "https://via.placeholder.com/120x180/1a1a2e/FFFFFF?text=Telefone+Preto+2"
+      sinopse: "O terror continua através da linha. Uma nova ligação, um novo pesadelo congelante.",
+      poster: "https://images.unsplash.com/photo-1598899134739-24c46f58b8c0?w=300&h=450&fit=crop"
     },
     {
       titulo: "Socorro!",
       genero: "Comédia/Ação",
       classificacao: "12 anos",
       duracao: "98 min",
-      sinopse: "Uma aventura hilariante cheia de risadas e ação. Prepare-se para gargalhar!",
-      poster: "https://via.placeholder.com/120x180/FFD700/000000?text=Socorro"
+      sinopse: "Uma aventura hilariante cheia de risadas e ação. Conheça Linda Liddle, ela é de estratégia e planejamento!",
+      poster: "https://images.unsplash.com/photo-1605113945556-8cd357ce0f19?w=300&h=450&fit=crop"
     }
   ];
 
@@ -404,7 +404,7 @@
       card.className = "film-card";
       card.innerHTML = `
         <div class="film-poster">
-          <img src="${filme.poster}" alt="${filme.titulo}">
+          <img src="${filme.poster}" alt="${filme.titulo}" onerror="this.src='https://via.placeholder.com/120x180/333/FFF?text=${encodeURIComponent(filme.titulo)}'">
         </div>
         <div class="film-info">
           <div class="film-title">${filme.titulo}</div>
