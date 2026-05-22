@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cinema VIP - Filmes em Cartaz</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      min-height: 100vh;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .container {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+      max-width: 600px;
+      width: 100%;
+      padding: 30px;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .header h1 {
+      font-size: 2.5em;
+      margin-bottom: 10px;
+      background: linear-gradient(135deg, #e94560 0%, #f97316 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .header p {
+      color: #666;
+      font-size: 0.95em;
+    }
+
+    .films-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .film-card {
+      background: #f8f9fa;
+      border-radius: 15px;
+      padding: 20px;
+      border: 2px solid #e9ecef;
+      transition: transform 0.3s, box-shadow 0.3s;
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .film-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 40px rgba(233, 69, 96, 0.2);
+      border-color: #e94560;
+    }
+
+    .film-poster {
+      flex-shrink: 0;
+    }
+
+    .film-poster img {
+      width: 120px;
+      height: 180px;
+      border-radius: 10px;
+      object-fit: cover;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    }
+
+    .film-info {
+      flex: 1;
+    }
+
+    .film-title {
+      font-size: 1.3em;
+      font-weight: 700;
+      color: #333;
+      margin-bottom: 8px;
+    }
+
+    .film-details {
+      font-size: 0.9em;
+      color: #666;
+      margin-bottom: 5px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .film-detail-item {
+      background: white;
+      padding: 4px 10px;
+      border-radius: 5px;
+      border: 1px solid #e0e0e0;
+    }
+
+    .film-synopsis {
+      font-size: 0.85em;
+      color: #555;
+      margin: 10px 0;
+      line-height: 1.4;
+    }
+
+    .film-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .choose-btn {
+      background: linear-gradient(135deg, #e94560 0%, #f97316 100%);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: transform 0.2s, box-shadow 0.2s;
+      flex: 1;
+    }
+
+    .choose-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 15px rgba(233, 69, 96, 0.3);
+    }
+
+    .choose-btn.selected {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    }
+
+    .selected-section {
+      background: #f0f9ff;
+      border-radius: 15px;
+      padding: 20px;
+      margin-bottom: 20px;
+      border: 2px solid #bfdbfe;
+      display: none;
+    }
+
+    .selected-section.active {
+      display: block;
+    }
+
+    .selected-section h2 {
+      font-size: 1.2em;
+      color: #1e40af;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .selected-film-card {
+      background: white;
+      border-radius: 10px;
+      padding: 15px;
+      border-left: 4px solid #3b82f6;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .selected-film-name {
+      font-weight: 600;
+      color: #333;
+    }
+
+    .remove-btn {
+      background: #ef4444;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.85em;
+      transition: background 0.2s;
+    }
+
+    .remove-btn:hover {
+      background: #dc2626;
+    }
+
+    .action-button {
+      width: 100%;
+      padding: 15px;
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 1.1em;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .action-button:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
+    }
+
+    .action-button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .empty-message {
+      text-align: center;
+      color: #999;
+      padding: 20px;
+      font-size: 0.95em;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 30px;
+      border-radius: 15px;
+      text-align: center;
+      max-width: 400px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+
+    .modal-content h2 {
+      margin-bottom: 15px;
+      color: #333;
+    }
+
+    .modal-content p {
+      color: #666;
+      margin-bottom: 20px;
+      font-size: 0.95em;
+    }
+
+    .modal-buttons {
+      display: flex;
+      gap: 10px;
+    }
+
+    .modal-buttons button {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background 0.2s;
+    }
+
+    .modal-cancel {
+      background: #f0f0f0;
+      color: #333;
+    }
+
+    .modal-cancel:hover {
+      background: #e0e0e0;
+    }
+
+    .modal-confirm {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: white;
+    }
+
+    .modal-confirm:hover {
+      background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 20px;
+      }
+
+      .header h1 {
+        font-size: 2em;
+      }
+
+      .film-card {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .film-poster img {
+        width: 100px;
+        height: 150px;
+      }
+
+      .film-actions {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <h1>🎬 Cinema VIP</h1>
+    <p>Escolha seu filme favorito</p>
+  </div>
+
+  <!-- FILMES -->
+  <div class="films-grid" id="filmsGrid">
+    <!-- Filmes serão adicionados via JavaScript -->
+  </div>
+
+  <!-- SELEÇÃO -->
+  <div class="selected-section" id="selectedSection">
+    <h2>🎥 Sua Escolha</h2>
+    <div id="selectedFilm" class="empty-message">Nenhum filme selecionado</div>
+  </div>
+
+  <!-- BOTÃO ENVIAR -->
+  <button class="action-button" id="sendBtn" onclick="abrirConfirmacao()" disabled>
+    📲 Enviar Escolha
+  </button>
+
+  <div style="text-align: center; margin-top: 15px; font-size: 0.85em; color: #999;">
+    Última atualização: <span id="timestamp"></span>
+  </div>
+</div>
+
+<!-- MODAL DE CONFIRMAÇÃO -->
+<div class="modal" id="confirmModal">
+  <div class="modal-content">
+    <h2>✅ Confirmar Escolha</h2>
+    <p>Tem certeza que deseja enviar esta escolha de filme via WhatsApp?</p>
+    <div class="modal-buttons">
+      <button class="modal-cancel" onclick="fecharConfirmacao()">Cancelar</button>
+      <button class="modal-confirm" onclick="enviarPedido()">Enviar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  let escolhido = null;
+  const numero = "5583981735110";
+
+  const filmes = [
+    {
+      titulo: "A Maldição da Múmia",
+      genero: "Terror",
+      classificacao: "16 anos",
+      duracao: "110 min",
+      sinopse: "Um antigo artefato egípcio desperta uma maldição ancestral. O terror é despertado.",
+      poster: "https://via.placeholder.com/120x180/8B4513/FFFFFF?text=Maldição+da+Múmia"
+    },
+    {
+      titulo: "O Telefone Preto 2",
+      genero: "Terror/Suspense",
+      classificacao: "14 anos",
+      duracao: "105 min",
+      sinopse: "O terror continua através da linha. Uma nova ligação, um novo pesadelo.",
+      poster: "https://via.placeholder.com/120x180/1a1a2e/FFFFFF?text=Telefone+Preto+2"
+    },
+    {
+      titulo: "Socorro!",
+      genero: "Comédia/Ação",
+      classificacao: "12 anos",
+      duracao: "98 min",
+      sinopse: "Uma aventura hilariante cheia de risadas e ação. Prepare-se para gargalhar!",
+      poster: "https://via.placeholder.com/120x180/FFD700/000000?text=Socorro"
+    }
+  ];
+
+  function renderFilmes() {
+    const grid = document.getElementById("filmsGrid");
+    grid.innerHTML = "";
+
+    filmes.forEach((filme, index) => {
+      const card = document.createElement("div");
+      card.className = "film-card";
+      card.innerHTML = `
+        <div class="film-poster">
+          <img src="${filme.poster}" alt="${filme.titulo}">
+        </div>
+        <div class="film-info">
+          <div class="film-title">${filme.titulo}</div>
+          <div class="film-details">
+            <span class="film-detail-item">${filme.genero}</span>
+            <span class="film-detail-item">${filme.classificacao}</span>
+            <span class="film-detail-item">${filme.duracao}</span>
+          </div>
+          <div class="film-synopsis">${filme.sinopse}</div>
+          <div class="film-actions">
+            <button class="choose-btn ${escolhido === index ? 'selected' : ''}" onclick="escolherFilme(${index})">
+              ${escolhido === index ? '✓ Selecionado' : 'Escolher'}
+            </button>
+          </div>
+        </div>
+      `;
+      grid.appendChild(card);
+    });
+  }
+
+  function escolherFilme(index) {
+    escolhido = escolhido === index ? null : index;
+    atualizarSelecao();
+    renderFilmes();
+  }
+
+  function atualizarSelecao() {
+    const selectedSection = document.getElementById("selectedSection");
+    const selectedFilm = document.getElementById("selectedFilm");
+    const sendBtn = document.getElementById("sendBtn");
+
+    if (escolhido !== null) {
+      const filme = filmes[escolhido];
+      selectedSection.classList.add("active");
+      selectedFilm.innerHTML = `
+        <div class="selected-film-card">
+          <div class="selected-film-name">${filme.titulo}</div>
+          <button class="remove-btn" onclick="escolherFilme(-1)">❌ Remover</button>
+        </div>
+      `;
+      sendBtn.disabled = false;
+    } else {
+      selectedSection.classList.remove("active");
+      selectedFilm.innerHTML = '<div class="empty-message">Nenhum filme selecionado</div>';
+      sendBtn.disabled = true;
+    }
+  }
+
+  function abrirConfirmacao() {
+    document.getElementById("confirmModal").classList.add("active");
+  }
+
+  function fecharConfirmacao() {
+    document.getElementById("confirmModal").classList.remove("active");
+  }
+
+  function enviarPedido() {
+    if (escolhido === null) {
+      alert("Escolha um filme!");
+      return;
+    }
+
+    fecharConfirmacao();
+
+    const filme = filmes[escolhido];
+    let mensagem = "*🎬 ESCOLHA DE FILME - CINEMA VIP 🎬*%0A";
+    mensagem += "==============================%0A%0A";
+    mensagem += `*Filme:* ${filme.titulo}%0A`;
+    mensagem += `*Gênero:* ${filme.genero}%0A`;
+    mensagem += `*Classificação:* ${filme.classificacao}%0A`;
+    mensagem += `*Duração:* ${filme.duracao}%0A`;
+    mensagem += `%0A*Sinopse:*%0A${filme.sinopse}%0A`;
+    mensagem += "%0A==============================%0A";
+    mensagem += `*Data/Hora:* ${obterDataHora()}%0A`;
+    mensagem += "%0A🍿 Obrigado por escolher o Cinema VIP!";
+
+    const url = `https://wa.me/${numero}?text=${mensagem}`;
+    window.open(url, "_blank");
+
+    // Resetar após enviar
+    setTimeout(() => {
+      escolhido = null;
+      atualizarSelecao();
+      renderFilmes();
+    }, 1000);
+  }
+
+  function obterDataHora() {
+    const agora = new Date();
+    const dia = String(agora.getDate()).padStart(2, '0');
+    const mes = String(agora.getMonth() + 1).padStart(2, '0');
+    const ano = agora.getFullYear();
+    const horas = String(agora.getHours()).padStart(2, '0');
+    const minutos = String(agora.getMinutes()).padStart(2, '0');
+    
+    return `${dia}/${mes}/${ano} às ${horas}:${minutos}`;
+  }
+
+  function atualizarTimestamp() {
+    document.getElementById("timestamp").textContent = obterDataHora();
+  }
+
+  // Inicializar
+  renderFilmes();
+  atualizarSelecao();
+  atualizarTimestamp();
+
+  // Fechar modal ao clicar fora
+  document.getElementById("confirmModal").addEventListener("click", function(event) {
+    if (event.target === this) {
+      fecharConfirmacao();
+    }
+  });
+</script>
+
+</body>
+</html>
